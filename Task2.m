@@ -2,15 +2,6 @@ clear
 load('circles3d.mat')
 
 len = 1;
-%{
-plot3(X(:,1), X(:,2), X(:,3), 'o')
-xlabel('X[1]')
-ylabel('X[2]')
-zlabel('X[3]')
-grid on
-axis square
-%}
-
 D = [];
 k = 3;
 [n,d]=knnsearch(X, X, 'k', k + 1);
@@ -25,21 +16,21 @@ for idx1=1:100,
         value = 0;
         for i=1:3,
             %If n(idx1, idx2) is in graph
-            if(n(idx1, i+1) == idx2)
+            if((n(idx1, i+1) == idx2)&& (n(idx2, i+1) == idx1))
                 index = i+1;
                 value = idx2;
             end
         end
         if (value ~= 0)
-            W(idx1, value) = ctranspose(exp(-d(idx1, index)/len));
+            %Add weight to both adjacency matrices
+            W(idx1, value) = W(idx1, value) + exp(-d(idx1, index)/len);
+            W(value, idx1) = W(value, idx1) + exp(-d(idx1, index)/len);
         end
     end
 end
 
-
 %Compute the degree matrix
 for m=1:size(W, 1),
-    degreeOfVertex = 0;
     index = m;
     
     %Get ocurrences of each value in matrix
@@ -53,13 +44,12 @@ end
 %Construct corresponding Laplacian matrix L
 L = DegMat-W;
 LCT = ctranspose(L);
-W;
 
 %Find eigencalues of the Laplacian L*
-lctEv = eig(LCT)
+lctEv = eig(LCT);
 
-%Non-symmetric adjacency matrix
-spy(W)
+%Symmetric adjacency matrix and Laplacian
+spy(W);
 
 %whos
 
