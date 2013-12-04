@@ -1,9 +1,9 @@
 clear
 load('circles3d.mat')
 
-len = 10;
+len = 1;
 D = [];
-k = 12;
+k = 5;
 [n,d]=knnsearch(X, X, 'k', k + 1);
 
 W = zeros(100);
@@ -68,7 +68,6 @@ for i=1:100,
         size = size + V(i, j);
     end
     size = size/100;
-    
     if ((size < thirdSize) && (size ~= 0)),
         if(size < secondSize),
            if(size < firstSize),
@@ -86,18 +85,30 @@ for i=1:100,
 end
 
 %plot3(V(firstIDX,:), V(secondIDX,:), V(thirdIDX,:));
-scatter3(V(firstIDX,:), V(secondIDX,:), V(thirdIDX,:));
-%scatter3(V(1,:), V(2,:), V(3,:));
+%scatter3(V(firstIDX,:), V(secondIDX,:), V(thirdIDX,:));
 %scatter3(V(2,:), V(5,:), V(7,:));
 
-%Plot 3 eigenvectors
-xlabel('V[first]')
-ylabel('V[second]')
-zlabel('V[third]')
+%whos
+XL = [V(firstIDX,:)' V(secondIDX,:)' V(thirdIDX,:)']
+XL = X;
+y
+
+%load fisheriris %test data
+%X = meas(:,1:3);
+
+% K-means clustering
+% (K: number of clusters, G: assigned groups, C: cluster centers)
+K = 4;
+[G,C] = kmeans(XL, K, 'distance','sqEuclidean', 'start','sample');
+
+% show points and clusters (color-coded)
+clr = lines(K);
+figure, hold on
+scatter3(XL(:,1), XL(:,2), XL(:,3), 36, clr(G,:), 'Marker','.')
+scatter3(C(:,1), C(:,2), C(:,3), 100, clr, 'Marker','o', 'LineWidth',3)
+hold off
+view(3), axis vis3d, box on, rotate3d on
+xlabel('x'), ylabel('y'), zlabel('z')
 grid on
 axis square
-
-
-
-
 
